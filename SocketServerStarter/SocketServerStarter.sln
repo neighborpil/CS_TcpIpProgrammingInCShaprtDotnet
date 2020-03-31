@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29911.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocketServerStarter", "SocketServerStarter\SocketServerStarter.csproj", "{E79ABCC0-48AD-4515-9885-F78FBFB68205}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E79ABCC0-48AD-4515-9885-F78FBFB68205}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E79ABCC0-48AD-4515-9885-F78FBFB68205}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E79ABCC0-48AD-4515-9885-F78FBFB68205}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E79ABCC0-48AD-4515-9885-F78FBFB68205}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {58BE2CAE-294D-479C-919B-383256063880}
+	EndGlobalSection
+EndGlobal
