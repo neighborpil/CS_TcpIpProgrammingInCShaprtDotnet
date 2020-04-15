@@ -7,14 +7,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SocketAsyncLib;
 
 namespace UdemySocketAsyncServer
 {
     public partial class Form1 : Form
     {
+        private SocketAsyncServer _Server;
+
         public Form1()
         {
             InitializeComponent();
+
+            _Server = new SocketAsyncServer();
+        }
+
+        private void btnAcceptIncomingAsync_Click(object sender, EventArgs e)
+        {
+            _Server.StartListeningForIncomingConnection();
         }
     }
 }

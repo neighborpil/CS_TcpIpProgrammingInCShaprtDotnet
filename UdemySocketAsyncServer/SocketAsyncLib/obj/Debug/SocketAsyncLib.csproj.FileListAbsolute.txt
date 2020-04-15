@@ -1,0 +1,6 @@
+C:\codes\GitRepository\CS_TcpIpProgrammingInCShaprtDotnet\UdemySocketAsyncServer\SocketAsyncLib\bin\Debug\SocketAsyncLib.dll
+C:\codes\GitRepository\CS_TcpIpProgrammingInCShaprtDotnet\UdemySocketAsyncServer\SocketAsyncLib\bin\Debug\SocketAsyncLib.pdb
+C:\codes\GitRepository\CS_TcpIpProgrammingInCShaprtDotnet\UdemySocketAsyncServer\SocketAsyncLib\obj\Debug\SocketAsyncLib.csprojAssemblyReference.cache
+C:\codes\GitRepository\CS_TcpIpProgrammingInCShaprtDotnet\UdemySocketAsyncServer\SocketAsyncLib\obj\Debug\SocketAsyncLib.csproj.CoreCompileInputs.cache
+C:\codes\GitRepository\CS_TcpIpProgrammingInCShaprtDotnet\UdemySocketAsyncServer\SocketAsyncLib\obj\Debug\SocketAsyncLib.dll
+C:\codes\GitRepository\CS_TcpIpProgrammingInCShaprtDotnet\UdemySocketAsyncServer\SocketAsyncLib\obj\Debug\SocketAsyncLib.pdb
