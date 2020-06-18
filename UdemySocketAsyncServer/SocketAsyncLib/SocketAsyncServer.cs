@@ -92,20 +92,20 @@ namespace SocketAsyncLib
 
                 Console.WriteLine(ex.ToString());
             }
-            finally
-            {
-                if (reader != null)
-                {
-                    reader.Close();
-                    reader.Dispose();
-                }
+            //finally
+            //{
+            //    if (reader != null)
+            //    {
+            //        reader.Close();
+            //        reader.Dispose();
+            //    }
 
-                if (stream != null)
-                {
-                    stream.Close();
-                    stream.Dispose();
-                }
-            }
+            //    if (stream != null)
+            //    {
+            //        stream.Close();
+            //        stream.Dispose();
+            //    }
+            //}
         }
 
         private void RemoveClient(TcpClient client)
@@ -148,6 +148,22 @@ namespace SocketAsyncLib
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        public void StopServer()
+        {
+            try
+            {
+                _tcpListener?.Stop();
+                _clients.ForEach(c => c.Close());
+                _clients.Clear();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
         }
     }
 }

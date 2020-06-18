@@ -31,5 +31,15 @@ namespace UdemySocketAsyncServer
         {
             _server.SendToAll(txtMessage.Text.Trim());
         }
+
+        private void btnStopServer_Click(object sender, EventArgs e)
+        {
+            _server.StopServer();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _server.StopServer();
+        }
     }
 }
