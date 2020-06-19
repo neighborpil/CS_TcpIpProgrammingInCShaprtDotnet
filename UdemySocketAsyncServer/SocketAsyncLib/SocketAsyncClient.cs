@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -76,6 +77,8 @@ namespace SocketAsyncLib
             {
                 await _client.ConnectAsync(_serverIpAddress, _serverPort);
                 Console.WriteLine($"Connected to server IP/Port: {_serverIpAddress} / {_serverPort}");
+
+                ReadDataAsync(_client);
             }
             catch (Exception ex)
             {
@@ -84,5 +87,36 @@ namespace SocketAsyncLib
             }
         }
 
+        private async Task ReadDataAsync(TcpClient client)
+        {
+            try
+            {
+                var streamReader = new StreamReader(_client.GetStream());
+                var buffer = new char[64];
+                int readByteCount = 0;
+
+                while (true)
+                {
+                    readByteCount = await streamReader.ReadAsync(buffer, 0, buffer.Length);
+
+                    if (readByteCount <= 0) // 0바이트를 받았다는 것은 연결이 끊겼다는 것을 의미
+                    {
+                        Console.WriteLine("Disconnected from server");
+                        _client.Close();
+                        break;
+                    }
+
+                    Console.WriteLine($"Received bytes: {readByteCount} - Message: {new string(buffer, 0, readByteCount)}");
+
+                    Array.Clear(buffer, 0, buffer.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+
+        }
     }
 }
