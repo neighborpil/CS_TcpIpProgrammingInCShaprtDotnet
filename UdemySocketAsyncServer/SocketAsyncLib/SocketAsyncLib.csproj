@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomEventArgs.cs" />
     <Compile Include="SocketAsyncClient.cs" />
     <Compile Include="SocketAsyncServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

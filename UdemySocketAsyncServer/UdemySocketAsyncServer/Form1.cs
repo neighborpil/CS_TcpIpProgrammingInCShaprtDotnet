@@ -20,6 +20,18 @@ namespace UdemySocketAsyncServer
             InitializeComponent();
 
             _server = new SocketAsyncServer();
+            _server.RaiseClientConnectedEvent += (s, e) =>
+            {
+                txtConsole.AppendText($"{DateTime.Now} - New client connected: {e.NewClient}{Environment.NewLine}");
+            };
+            _server.RaiseTextReceivedEvent += (s, e) =>
+            {
+                txtConsole.AppendText($"{DateTime.Now} - Received from {e.ClientWhoSentText}: {e.TextReceived}{Environment.NewLine}");
+            };
+            _server.RaiseClientDisconnectedEvent += (s, e) =>
+            {
+                txtConsole.AppendText($"{DateTime.Now} - New client disconnected: {e.DisconnectedPeer}{Environment.NewLine}");
+            };
         }
 
         private void btnAcceptIncomingAsync_Click(object sender, EventArgs e)

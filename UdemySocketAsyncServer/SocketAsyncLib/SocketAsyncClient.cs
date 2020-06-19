@@ -14,11 +14,33 @@ namespace SocketAsyncLib
 
         private TcpClient _client;
 
+
+        public EventHandler<ConnectedEventArgs> RaiseServerConnectedEvent;
+
+        public EventHandler<TextReceivedEventArgs> RaiseTextReceivedEvent;
+
+        public EventHandler<DisconnectedEventArgs> RaiseServerDisconnectedEvent;
+
         public SocketAsyncClient()
         {
             _serverIpAddress = null;
             _client = null;
             _serverPort = -1;
+        }
+
+        protected virtual void OnRaiseServerConnectedEvent(ConnectedEventArgs e)
+        {
+            RaiseServerConnectedEvent?.Invoke(this, e);
+        }
+
+        protected virtual void OnRaiseTextReceivedEvent(TextReceivedEventArgs e)
+        {
+            RaiseTextReceivedEvent?.Invoke(this, e);
+        }
+
+        protected virtual void OnRaiseServerDisconnectedEvent(DisconnectedEventArgs e)
+        {
+            RaiseServerDisconnectedEvent?.Invoke(this, e);
         }
 
         public IPAddress ServerIpAddress
@@ -78,12 +100,14 @@ namespace SocketAsyncLib
                 await _client.ConnectAsync(_serverIpAddress, _serverPort);
                 Console.WriteLine($"Connected to server IP/Port: {_serverIpAddress} / {_serverPort}");
 
+                var args = new ConnectedEventArgs(_client.Client.RemoteEndPoint.ToString());
+                OnRaiseServerConnectedEvent(args);
+
                 ReadDataAsync(_client);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                throw;
             }
         }
 
@@ -101,12 +125,16 @@ namespace SocketAsyncLib
 
                     if (readByteCount <= 0) // 0바이트를 받았다는 것은 연결이 끊겼다는 것을 의미
                     {
+                        OnRaiseServerDisconnectedEvent(new DisconnectedEventArgs(_client.Client.RemoteEndPoint.ToString()));
+
                         Console.WriteLine("Disconnected from server");
                         _client.Close();
                         break;
                     }
 
-                    Console.WriteLine($"Received bytes: {readByteCount} - Message: {new string(buffer, 0, readByteCount)}");
+                    var receivedMessage = new string(buffer, 0, readByteCount);
+                    Console.WriteLine($"Received bytes: {readByteCount} - Message: {receivedMessage}");
+                    OnRaiseTextReceivedEvent(new TextReceivedEventArgs(client.Client.RemoteEndPoint.ToString(), receivedMessage));
 
                     Array.Clear(buffer, 0, buffer.Length);
                 }
@@ -114,9 +142,65 @@ namespace SocketAsyncLib
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                throw;
             }
 
+        }
+
+        public async Task SendToServer(string strInputUser)
+        {
+            if (string.IsNullOrWhiteSpace(strInputUser))
+            {
+                Console.WriteLine("Empty string supplied to send.");
+                return;
+            }
+
+            if (_client != null)
+            {
+                if (_client.Connected)
+                {
+                    var streamWriter = new StreamWriter(_client.GetStream());
+                    streamWriter.AutoFlush = true;
+
+                    await streamWriter.WriteAsync(strInputUser);
+                    Console.WriteLine("Data sent");
+                }
+            }
+
+        }
+
+        public void CloseAndDisconnect()
+        {
+
+
+            if (_client != null)
+            {
+                if (_client.Connected)
+                {
+                    _client.Close();
+                }
+            }
+
+        }
+
+        public IPAddress ResolveHostNameToIpAddress(string strHostName)
+        {
+            try
+            {
+                var addresses = Dns.GetHostAddresses(strHostName.Trim());
+                foreach (var ipAddress in addresses)
+                {
+                    if (ipAddress.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        return ipAddress;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+            return null;
         }
     }
 }

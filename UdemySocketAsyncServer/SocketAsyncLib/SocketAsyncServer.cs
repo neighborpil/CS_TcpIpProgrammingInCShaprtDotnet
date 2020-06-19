@@ -19,12 +19,34 @@ namespace SocketAsyncLib
 
         private readonly List<TcpClient> _clients;
 
+        public EventHandler<ConnectedEventArgs> RaiseClientConnectedEvent;
+
+        public EventHandler<TextReceivedEventArgs> RaiseTextReceivedEvent;
+
+        public EventHandler<DisconnectedEventArgs> RaiseClientDisconnectedEvent;
+
         public bool _keepRunning { get; set; }
 
         public SocketAsyncServer()
         {
             _clients = new List<TcpClient>();
         }
+
+        protected virtual void OnRaiseClientConnectedEvent(ConnectedEventArgs e)
+        {
+            RaiseClientConnectedEvent?.Invoke(this, e);
+        }
+
+        protected virtual void OnRaiseTextReceivedEvent(TextReceivedEventArgs e)
+        {
+            RaiseTextReceivedEvent?.Invoke(this, e);
+        }
+
+        protected virtual void OnRaiseClientDisconnectedEvent(DisconnectedEventArgs e)
+        {
+            RaiseClientDisconnectedEvent?.Invoke(this, e);
+        }
+
 
         public async void StartListeningForIncomingConnection(IPAddress ipAddress = null, int port = 50001)
         {
@@ -39,13 +61,16 @@ namespace SocketAsyncLib
 
                 while (_keepRunning)
                 {
-                    var connectedClient = await _tcpListener.AcceptTcpClientAsync();
+                    var returnedByAccept = await _tcpListener.AcceptTcpClientAsync();
 
-                    _clients.Add(connectedClient);
+                    _clients.Add(returnedByAccept);
 
-                    Console.WriteLine($"Client({_clients.Count}) connected successfully: {connectedClient}");
+                    Console.WriteLine($"Client({_clients.Count}) connected successfully: {returnedByAccept}");
 
-                    TakeCareOfTcpClient(connectedClient);
+                    TakeCareOfTcpClient(returnedByAccept);
+
+                    var args = new ConnectedEventArgs(returnedByAccept.Client.RemoteEndPoint.ToString());
+                    OnRaiseClientConnectedEvent(args);
                 }
             }
             catch (Exception ex)
@@ -57,6 +82,7 @@ namespace SocketAsyncLib
         {
             NetworkStream stream = null;
             StreamReader reader = null;
+            var clientEndPoint = client.Client.RemoteEndPoint.ToString();
 
             try
             {
@@ -75,6 +101,8 @@ namespace SocketAsyncLib
 
                     if (length == 0)
                     {
+                        OnRaiseClientDisconnectedEvent(new DisconnectedEventArgs(clientEndPoint));
+
                         RemoveClient(client);
                         Console.WriteLine("Socket is disconnected");
                         break;
@@ -82,6 +110,8 @@ namespace SocketAsyncLib
 
                     string receivedMessage = new string(buffer, 0, length);
                     Console.WriteLine($"***Received: {receivedMessage}");
+
+                    OnRaiseTextReceivedEvent(new TextReceivedEventArgs(clientEndPoint, receivedMessage));
 
                     Array.Clear(buffer, 0, buffer.Length);
                 }
